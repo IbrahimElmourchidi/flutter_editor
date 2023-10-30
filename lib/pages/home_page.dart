@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_redundant_argument_values
 
 import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io' show File, Platform;
 import 'dart:ui';
 
@@ -34,8 +34,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final QuillController _controller;
-  late final Future<void> _loadDocumentFromAssetsFuture;
+  late final QuillController _controller = QuillController.basic();
+  // late final Future<void> _loadDocumentFromAssetsFuture;
   final FocusNode _focusNode = FocusNode();
   Timer? _selectAllTimer;
   _SelectionType _selectionType = _SelectionType.none;
@@ -54,109 +54,63 @@ class _HomePageState extends State<HomePage> {
     // _loadDocumentFromAssetsFuture = _loadFromAssets();
   }
 
-  Future<void> _loadFromAssets() async {
-    try {
-      final result = await rootBundle.loadString(isDesktop()
-          ? 'assets/sample_data_nomedia.json'
-          : 'assets/sample_data.json');
-      final doc = Document.fromJson(jsonDecode(result));
-      _controller = QuillController(
-        document: doc,
-        selection: const TextSelection.collapsed(offset: 0),
-      );
-    } catch (error) {
-      final doc = Document()..insert(0, 'Empty asset');
-      _controller = QuillController(
-        document: doc,
-        selection: const TextSelection.collapsed(offset: 0),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // _controller.changes.listen((change) {
-    //   var delta = _controller.document
-    //       .toDelta()
-    //       .map(
-    //         (e) => e.toJson(),
-    //       )
-    //       .toList();
-    //   final converter = QuillDeltaToHtmlConverter(
-    //     delta,
-    //     ConverterOptions.forEmail(),
-    //   );
+    _controller.changes.listen((change) {
+      var delta = _controller.document
+          .toDelta()
+          .map(
+            (e) => e.toJson(),
+          )
+          .toList();
+      final converter = QuillDeltaToHtmlConverter(
+        delta,
+        ConverterOptions.forEmail(),
+      );
 
-    //   final html = converter.convert();
-    //   print(html);
+      final html = converter.convert();
+      print(html);
 
-    //   // print(delta);
-    // });
+      // print(delta);
+    });
 
-    return FutureBuilder(
-      future: _loadDocumentFromAssetsFuture,
-      builder: (context, snapshot) {
-        _controller.changes.listen((change) {
-          var delta = _controller.document
-              .toDelta()
-              .map(
-                (e) => e.toJson(),
-              )
-              .toList();
-          final converter = QuillDeltaToHtmlConverter(
-            delta,
-            ConverterOptions.forEmail(),
-          );
-
-          final html = converter.convert();
-          print(html);
-
-          // print(delta);
-        });
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator.adaptive()),
-          );
-        }
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.grey.shade800,
-            elevation: 0,
-            centerTitle: false,
-            title: const Text(
-              'Flutter Quill',
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade800,
+        elevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Flutter Quill',
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => _insertTimeStamp(
+              _controller,
+              DateTime.now().toString(),
             ),
-            actions: [
-              IconButton(
-                onPressed: () => _insertTimeStamp(
-                  _controller,
-                  DateTime.now().toString(),
-                ),
-                icon: const Icon(Icons.add_alarm_rounded),
+            icon: const Icon(Icons.add_alarm_rounded),
+          ),
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Text(_controller.document.toPlainText([
+                  ...FlutterQuillEmbeds.builders(),
+                  TimeStampEmbedBuilderWidget()
+                ])),
               ),
-              IconButton(
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    content: Text(_controller.document.toPlainText([
-                      ...FlutterQuillEmbeds.builders(),
-                      TimeStampEmbedBuilderWidget()
-                    ])),
-                  ),
-                ),
-                icon: const Icon(Icons.text_fields_rounded),
-              )
-            ],
-          ),
-          drawer: Container(
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.sizeOf(context).width * 0.7),
-            color: Colors.grey.shade800,
-            child: _buildMenuBar(context),
-          ),
-          body: _buildWelcomeEditor(context),
-        );
-      },
+            ),
+            icon: const Icon(Icons.text_fields_rounded),
+          )
+        ],
+      ),
+      drawer: Container(
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.7),
+        color: Colors.grey.shade800,
+        child: _buildMenuBar(context),
+      ),
+      body: _buildWelcomeEditor(context),
     );
   }
 
@@ -336,6 +290,33 @@ class _HomePageState extends State<HomePage> {
     }
     return QuillToolbar(
       configurations: QuillToolbarConfigurations(
+        showCenterAlignment: false,
+        showClearFormat: false,
+        showCodeBlock: false,
+        showDividers: false,
+        showJustifyAlignment: false,
+        showColorButton: false,
+        showDirection: false,
+        showHeaderStyle: false,
+        showIndent: false,
+        showLink: false,
+        showQuote: false,
+        showRedo: false,
+        showUndo: false,
+        showFontFamily: false,
+        showFontSize: false,
+        showStrikeThrough: false,
+        showSubscript: false,
+        showSuperscript: false,
+        showSearchButton: false,
+        showListCheck: false,
+        showLeftAlignment: false,
+        showRightAlignment: false,
+        showSmallButton: false,
+        showListNumbers: false,
+        showInlineCode: false,
+        showAlignmentButtons: false,
+        showListBullets: true,
         embedButtons: FlutterQuillEmbeds.buttons(
           // provide a callback to enable picking images from device.
           // if omit, "image" button only allows adding images from url.
@@ -347,7 +328,6 @@ class _HomePageState extends State<HomePage> {
           // uncomment to provide a custom "pick from" dialog.
           // cameraPickSettingSelector: _selectCameraPickSetting,
         ),
-        showAlignmentButtons: true,
         buttonOptions: QuillToolbarButtonOptions(
           base: QuillToolbarBaseButtonOptions(
             afterButtonPressed: _focusNode.requestFocus,
