@@ -1,0 +1,65 @@
+name: app
+description: demo app
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  universal_html: ^2.2.4
+  vsc_quill_delta_to_html: ^1.0.3
+
+  cupertino_icons: ^1.0.6
+  path_provider: ^2.1.1
+  filesystem_picker: ^4.0.0
+  file_picker: ^6.0.0
+  flutter_quill:
+    path: ../
+  flutter_quill_extensions:
+    path: ../flutter_quill_extensions
+
+dependency_overrides:
+  flutter_quill:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/
+
+  fonts:
+    - family: monospace
+      fonts:
+        - asset: assets/fonts/MonoSpace.ttf
+    - family: serif
+      fonts:
+        - asset: assets/fonts/Serif.ttf
+    - family: sans-serif
+      fonts:
+        - asset: assets/fonts/SansSerif.ttf
+    - family: ibarra-real-nova
+      fonts:
+          - asset: assets/fonts/IbarraRealNova-Regular.ttf
+    - family: square-peg
+      fonts:
+        - asset: assets/fonts/SquarePeg-Regular.ttf
+    - family: nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+    - family: pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
+    - family: roboto-mono
+      fonts:
+        - asset: assets/fonts/RobotoMono-Regular.ttf
+    - family: SF-UI-Display
+      fonts:
+        - asset: assets/fonts/SF-Pro-Display-Regular.otf
