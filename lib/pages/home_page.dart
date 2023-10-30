@@ -15,7 +15,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 import '../universal_ui/universal_ui.dart';
@@ -56,6 +56,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    void uploadImage() async {
+      final result = await FilePicker.platform.pickFiles();
+      if (result?.files == null) return;
+      final pickedFile = result?.files.first;
+      final path = 'files/${pickedFile!.path!}';
+      final file = File(pickedFile!.path!);
+      final storageInstance = FirebaseStorage.instance;
+      final ref = storageInstance.ref().child(path);
+      ref.putFile(file).then((snap) async {
+        final url = await snap.ref.getDownloadURL();
+        print(url);
+      }).catchError((e) => print('errorrrrrrrrrrrrr => $e'));
+    }
+
     _controller.changes.listen((change) {
       var delta = _controller.document
           .toDelta()

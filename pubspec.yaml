@@ -20,6 +20,8 @@ dependencies:
     path: ../
   flutter_quill_extensions:
     path: ../flutter_quill_extensions
+  firebase_core: ^2.20.0
+  firebase_storage: ^11.4.0
 
 dependency_overrides:
   flutter_quill:
