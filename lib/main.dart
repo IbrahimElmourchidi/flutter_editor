@@ -5,8 +5,11 @@ import 'firebase_options.dart';
 
 import 'pages/home_page.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -27,7 +30,6 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: [
         const Locale('en', 'US'),
-        const Locale('zh', 'HK'),
       ],
       home: HomePage(),
     );
